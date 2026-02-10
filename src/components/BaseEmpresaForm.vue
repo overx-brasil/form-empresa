@@ -116,7 +116,17 @@
     </div>
 
     <div>
-      <label class="form-label">Link do Cardápio (opcional)</label>
+      <label class="form-label">Número</label>
+      <input
+        v-model="localForm.numero"
+        type="text"
+        placeholder="00"
+        class="form-input border border-black rounded-md w-full px-3 py-1.5"
+      />
+    </div>
+
+    <div>
+      <label class="form-label">Link do Cardápio</label>
       <input
         v-model="localForm.linkCardapio"
         type="url"
@@ -124,6 +134,8 @@
         class="form-input border border-black rounded-md w-full px-3 py-1.5"
       />
     </div>
+
+
   </div>
 </template>
 
@@ -150,6 +162,7 @@ const localForm = reactive({
   bairro: '',
   logradouro: '',
   cidade: '',
+  numero: '',
   linkCardapio: ''
 })
 
@@ -161,7 +174,15 @@ watch(
 
 watch(
   localForm,
-  () => emit('update:modelValue', { ...localForm }),
+  () => {
+    emit('update:modelValue', {
+      ...localForm,
+      linkCardapio:
+        localForm.linkCardapio?.trim() === ''
+          ? undefined
+          : localForm.linkCardapio,
+    })
+  },
   { deep: true }
 )
 </script>

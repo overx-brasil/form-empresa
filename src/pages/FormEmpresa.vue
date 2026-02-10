@@ -50,6 +50,7 @@ import { ref } from 'vue'
 import BaseEmpresaForm from '@/components/BaseEmpresaForm.vue'
 import bgImage from '@/assets/img2.png'
 import axios from 'axios'
+const API_BASE = 'https://whatsapp.overxbrasil.com.br'
 
 const form = ref({})
 const loading = ref(false)
@@ -60,7 +61,7 @@ async function submit() {
   success.value = false
 
   try {
-    await axios.post('/public/solicitacoes/empresa', form.value)
+    await axios.post(`${API_BASE}/solicitacoes/empresa`, form.value)
     success.value = true
   } catch (e) {
     console.error(e)
