@@ -33,13 +33,6 @@
         >
           {{ loading ? 'Enviando...' : 'Enviar Solicitação' }}
         </button>
-
-        <p
-          v-if="success"
-          class="text-green-600 text-center text-sm font-medium"
-        >
-          Solicitação enviada com sucesso! Em breve entraremos em contato.
-        </p>
       </form>
     </div>
   </div>
@@ -47,27 +40,49 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseEmpresaForm from '@/components/BaseEmpresaForm.vue'
 import bgImage from '@/assets/img2.png'
 import axios from 'axios'
-const API_BASE = 'https://whatsapp.overxbrasil.com.br'
 
-const form = ref({})
+
+const API_BASE = 'https://whatsapp.overxbrasil.com.br'
+const router = useRouter()
+const initialForm = {
+  nome: '',
+  cnpj: '',
+  cpf: '',
+  email: '',
+  telefone: '',
+  cep: '',
+  uf: '',
+  bairro: '',
+  logradouro: '',
+  cidade: '',
+  numero: '',
+  linkCardapio: undefined
+}
+
+const form = ref({ ...initialForm })
+
 const loading = ref(false)
-const success = ref(false)
 
 async function submit() {
   loading.value = true
-  success.value = false
 
   try {
     await axios.post(`${API_BASE}/solicitacoes/empresa`, form.value)
-    success.value = true
+
+    form.value = { ...initialForm }
+
+    router.push('/solicitacao-sucesso')
+
   } catch (e) {
     console.error(e)
-    alert('Erro ao enviar solicitação')
+    alert('Não foi possível enviar sua solicitação. Tente novamente.')
   } finally {
     loading.value = false
   }
 }
+
 </script>
