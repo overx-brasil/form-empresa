@@ -1,18 +1,26 @@
 <template>
   <div
-    class="min-h-screen flex items-start justify-center px-4 py-12 bg-cover bg-center bg-no-repeat"
+    class="relative min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat"
     :style="{ backgroundImage: `url(${bgImage})` }"
   >
     <div
-      class="w-full max-w-3xl bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+      class="absolute left-0 top-0 hidden md:flex h-full w-1/2 flex-col p-10 bg-cover bg-center items-start"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+      <div class="relative z-10 mt-12">
+        <img
+          src="@/assets/logo.svg"
+          alt="Company Logo"
+          class="h-24 w-auto"
+        />
+      </div>
+    </div>
+
+    <div
+      class="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
     >
       <div class="flex flex-col items-center gap-3 py-6 bg-gray-900 px-4 sm:px-6">
-        <div
-          class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-xl flex items-center justify-center shadow-md"
-        >
-          <img src="@/assets/logo1.png" alt="Logo Overx" class="h-8 w-auto sm:h-10" />
-        </div>
-
         <h1 class="text-white text-lg sm:text-xl md:text-2xl font-semibold text-center">
           Solicitação de Cadastro de Empresa
         </h1>
@@ -23,11 +31,14 @@
       </div>
 
       <form @submit.prevent="submit" class="p-4 sm:p-6 space-y-4">
-        <BaseEmpresaForm v-model="form" />
+        <BaseEmpresaForm
+          v-model="form"
+          @validation="formIsValid = $event"
+        />
 
         <button
           type="submit"
-          :disabled="loading"
+          :disabled="loading || !formIsValid"
           class="w-full bg-orange-600 text-white py-3 rounded-xl font-semibold
                  hover:bg-orange-700 transition disabled:bg-orange-400 disabled:cursor-not-allowed"
         >
@@ -45,8 +56,8 @@ import BaseEmpresaForm from '@/components/BaseEmpresaForm.vue'
 import bgImage from '@/assets/img2.png'
 import axios from 'axios'
 
-
 const API_BASE = 'https://whatsapp.overxbrasil.com.br'
+
 const router = useRouter()
 const initialForm = {
   nome: '',
@@ -60,14 +71,19 @@ const initialForm = {
   logradouro: '',
   cidade: '',
   numero: '',
-  linkCardapio: undefined
+  linkCardapio: ''
 }
-
+const formIsValid = ref(false)
 const form = ref({ ...initialForm })
 
 const loading = ref(false)
 
 async function submit() {
+  if (!formIsValid.value) {
+    alert('Preencha todos os campos corretamente.')
+    return
+  }
+
   loading.value = true
 
   try {
